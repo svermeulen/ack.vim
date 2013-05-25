@@ -1,11 +1,10 @@
+
 " NOTE: You must, of course, install the ack script
 "       in your path.
 " On Debian / Ubuntu:
 "   sudo apt-get install ack-grep
 " With MacPorts:
 "   sudo port install p5-app-ack
-" With Homebrew:
-"   brew install ack
 
 " Location of the ack utility
 if !exists("g:ackprg")
@@ -22,16 +21,16 @@ if !exists("g:ack_apply_lmappings")
 endif
 
 if !exists("g:ack_qhandler")
-  let g:ack_qhandler="botright copen"
+  let g:ack_qhandler="copen"
 endif
 
 if !exists("g:ack_lhandler")
-  let g:ack_lhandler="botright lopen"
+  let g:ack_lhandler="lopen"
 endif
 
 function! s:Ack(cmd, args)
+  wa
   redraw
-  echo "Searching ..."
 
   " If no pattern is provided, search for the word under the cursor
   if empty(a:args)
@@ -39,6 +38,9 @@ function! s:Ack(cmd, args)
   else
     let l:grepargs = a:args . join(a:000, ' ')
   end
+  let grepargs = escape(grepargs, '|#%')
+
+  echom "Searching..."
 
   " Format, used to manage column jump
   if a:cmd =~# '-g$'
@@ -52,39 +54,17 @@ function! s:Ack(cmd, args)
   try
     let &grepprg=g:ackprg
     let &grepformat=g:ackformat
-    silent execute a:cmd . " " . escape(l:grepargs, '|')
+    silent execute a:cmd . " " . grepargs
   finally
     let &grepprg=grepprg_bak
     let &grepformat=grepformat_bak
   endtry
 
-  if a:cmd =~# '^l'
-    exe g:ack_lhandler
-    let l:apply_mappings = g:ack_apply_lmappings
-  else
-    exe g:ack_qhandler
-    let l:apply_mappings = g:ack_apply_qmappings
-  endif
-
-  if l:apply_mappings
-    exec "nnoremap <silent> <buffer> q :ccl<CR>"
-    exec "nnoremap <silent> <buffer> t <C-W><CR><C-W>T"
-    exec "nnoremap <silent> <buffer> T <C-W><CR><C-W>TgT<C-W><C-W>"
-    exec "nnoremap <silent> <buffer> o <CR>"
-    exec "nnoremap <silent> <buffer> go <CR><C-W><C-W>"
-    exec "nnoremap <silent> <buffer> h <C-W><CR><C-W>K"
-    exec "nnoremap <silent> <buffer> H <C-W><CR><C-W>K<C-W>b"
-    exec "nnoremap <silent> <buffer> v <C-W><CR><C-W>H<C-W>b<C-W>J<C-W>t"
-    exec "nnoremap <silent> <buffer> gv <C-W><CR><C-W>H<C-W>b<C-W>J"
-  endif
-
-  " If highlighting is on, highlight the search keyword.
-  if exists("g:ackhighlight")
-    let @/=a:args
-    set hlsearch
-  end
+  let searchStr = matchstr(a:args, '\"\zs[^\"]*\ze\"')
+  call g:QuickFixHelperOpenWindow(searchStr)
 
   redraw!
+  echom "Command: ". a:cmd . " " . escape(l:grepargs, '|')
 endfunction
 
 function! s:AckFromSearch(cmd, args)
@@ -110,11 +90,11 @@ function! s:AckHelp(cmd,args)
     call s:Ack(a:cmd,args)
 endfunction
 
-command! -bang -nargs=* -complete=file Ack call s:Ack('grep<bang>',<q-args>)
-command! -bang -nargs=* -complete=file AckAdd call s:Ack('grepadd<bang>', <q-args>)
-command! -bang -nargs=* -complete=file AckFromSearch call s:AckFromSearch('grep<bang>', <q-args>)
-command! -bang -nargs=* -complete=file LAck call s:Ack('lgrep<bang>', <q-args>)
-command! -bang -nargs=* -complete=file LAckAdd call s:Ack('lgrepadd<bang>', <q-args>)
-command! -bang -nargs=* -complete=file AckFile call s:Ack('grep<bang> -g', <q-args>)
-command! -bang -nargs=* -complete=help AckHelp call s:AckHelp('grep<bang>',<q-args>)
-command! -bang -nargs=* -complete=help LAckHelp call s:AckHelp('lgrep<bang>',<q-args>)
+command! -bang -nargs=* Ack call s:Ack('grep<bang>',<q-args>)
+command! -bang -nargs=* AckAdd call s:Ack('grepadd<bang>', <q-args>)
+command! -bang -nargs=* AckFromSearch call s:AckFromSearch('grep<bang>', <q-args>)
+command! -bang -nargs=* LAck call s:Ack('lgrep<bang>', <q-args>)
+command! -bang -nargs=* LAckAdd call s:Ack('lgrepadd<bang>', <q-args>)
+command! -bang -nargs=* AckFile call s:Ack('grep<bang> -g', <q-args>)
+command! -bang -nargs=* AckHelp call s:AckHelp('grep<bang>',<q-args>)
+command! -bang -nargs=* LAckHelp call s:AckHelp('lgrep<bang>',<q-args>)
