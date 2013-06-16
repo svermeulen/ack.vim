@@ -63,6 +63,9 @@ function! s:Ack(cmd, args)
   let searchStr = matchstr(a:args, '\"\zs[^\"]*\ze\"')
   call g:QuickFixHelperOpenWindow(searchStr)
 
+  " Note: this won't work all the time since vim's regex is not perl regex
+  let @/=searchStr
+
   redraw!
   echom "Command: ". a:cmd . " " . escape(l:grepargs, '|')
 endfunction
