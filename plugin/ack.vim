@@ -40,8 +40,6 @@ function! s:Ack(cmd, args)
   end
   let grepargs = escape(grepargs, '|#%')
 
-  echom "Searching..."
-
   " Format, used to manage column jump
   if a:cmd =~# '-g$'
     let g:ackformat="%f"
@@ -49,25 +47,14 @@ function! s:Ack(cmd, args)
     let g:ackformat="%f:%l:%c:%m"
   end
 
-  let grepprg_bak=&grepprg
-  let grepformat_bak=&grepformat
-  try
-    let &grepprg=g:ackprg
-    let &grepformat=g:ackformat
-    silent execute a:cmd . " " . grepargs
-  finally
-    let &grepprg=grepprg_bak
-    let &grepformat=grepformat_bak
-  endtry
+  setlocal errorformat=%f:%l:%c:%m
+  let &l:makeprg=g:ackprg." ".grepargs
+  Make
 
   let searchStr = matchstr(a:args, '\"\zs[^\"]*\ze\"')
-  call g:QuickFixHelperOpenWindow(searchStr)
 
   " Note: this won't work all the time since vim's regex is not perl regex
   let @/=searchStr
-
-  redraw!
-  echom "Command: ". a:cmd . " " . escape(l:grepargs, '|')
 endfunction
 
 function! s:AckFromSearch(cmd, args)
