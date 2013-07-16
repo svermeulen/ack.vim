@@ -8,8 +8,7 @@
 
 " Location of the ack utility
 if !exists("g:ackprg")
-  let s:ackcommand = executable('ack-grep') ? 'ack-grep' : 'ack'
-  let g:ackprg=s:ackcommand." -H --nocolor --nogroup --column"
+  let g:ackprg="ag --column"
 endif
 
 if !exists("g:ack_apply_qmappings")
