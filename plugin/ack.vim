@@ -27,6 +27,41 @@ if !exists("g:ack_lhandler")
   let g:ack_lhandler="lopen"
 endif
 
+" Same as ack except waits to complete
+function! s:AckSynchronous(cmd, args)
+    wa
+    redraw
+
+    " If no pattern is provided, search for the word under the cursor
+    if empty(a:args)
+        let l:grepargs = expand("<cword>")
+    else
+        let l:grepargs = a:args . join(a:000, ' ')
+    end
+    let grepargs = escape(grepargs, '|#%')
+
+    echom "Searching..."
+
+    " Format, used to manage column jump
+    if a:cmd =~# '-g$'
+        let g:ackformat="%f"
+    else
+        let g:ackformat="%f:%l:%c:%m"
+    end
+
+    let grepprg_bak=&grepprg
+    let grepformat_bak=&grepformat
+    try
+        let &grepprg=g:ackprg
+        let &grepformat=g:ackformat
+        silent execute a:cmd . " " . grepargs
+    finally
+        let &grepprg=grepprg_bak
+        let &grepformat=grepformat_bak
+    endtry
+
+endfunction
+
 function! s:Ack(cmd, args)
   wa
   redraw
@@ -80,6 +115,7 @@ function! s:AckHelp(cmd,args)
 endfunction
 
 command! -bang -nargs=* Ack call s:Ack('grep<bang>',<q-args>)
+command! -bang -nargs=* AckSync call s:AckSynchronous('grep<bang>',<q-args>)
 command! -bang -nargs=* AckAdd call s:Ack('grepadd<bang>', <q-args>)
 command! -bang -nargs=* AckFromSearch call s:AckFromSearch('grep<bang>', <q-args>)
 command! -bang -nargs=* LAck call s:Ack('lgrep<bang>', <q-args>)
