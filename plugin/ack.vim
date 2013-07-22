@@ -40,7 +40,7 @@ function! s:AckSynchronous(cmd, args)
     end
     let grepargs = escape(grepargs, '|#%')
 
-    echom "Searching..."
+    echo "Searching..."
 
     " Format, used to manage column jump
     if a:cmd =~# '-g$'
@@ -60,6 +60,7 @@ function! s:AckSynchronous(cmd, args)
         let &grepformat=grepformat_bak
     endtry
 
+    echo "Finished search"
 endfunction
 
 function! s:Ack(cmd, args)
