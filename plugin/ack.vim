@@ -27,43 +27,15 @@ if !exists("g:ack_lhandler")
   let g:ack_lhandler="lopen"
 endif
 
-" Same as ack except waits to complete
 function! s:AckSynchronous(cmd, args)
-    wa
-    redraw
-
-    " If no pattern is provided, search for the word under the cursor
-    if empty(a:args)
-        let l:grepargs = expand("<cword>")
-    else
-        let l:grepargs = a:args . join(a:000, ' ')
-    end
-    let grepargs = escape(grepargs, '|#%')
-
-    echo "Searching..."
-
-    " Format, used to manage column jump
-    if a:cmd =~# '-g$'
-        let g:ackformat="%f"
-    else
-        let g:ackformat="%f:%l:%c:%m"
-    end
-
-    let grepprg_bak=&grepprg
-    let grepformat_bak=&grepformat
-    try
-        let &grepprg=g:ackprg
-        let &grepformat=g:ackformat
-        silent execute a:cmd . " " . grepargs
-    finally
-        let &grepprg=grepprg_bak
-        let &grepformat=grepformat_bak
-    endtry
-
-    echo "Finished search"
+    call s:Ack(a:cmd, a:args, 0)
 endfunction
 
-function! s:Ack(cmd, args)
+function! s:AckAsynchronous(cmd, args)
+    call s:Ack(a:cmd, a:args, 1)
+endfunction
+
+function! s:Ack(cmd, args, async)
   wa
   redraw
 
@@ -73,7 +45,8 @@ function! s:Ack(cmd, args)
   else
     let l:grepargs = a:args . join(a:000, ' ')
   end
-  let grepargs = escape(grepargs, '|#%')
+
+  echo "Searching..."
 
   " Format, used to manage column jump
   if a:cmd =~# '-g$'
@@ -82,9 +55,17 @@ function! s:Ack(cmd, args)
     let g:ackformat="%f:%l:%c:%m"
   end
 
-  setlocal errorformat=%f:%l:%c:%m
-  let &l:makeprg=g:ackprg." ".grepargs
-  Make
+  if a:async
+      setlocal errorformat=%f:%l:%c:%m
+      let &l:makeprg=g:ackprg." ".grepargs
+      Make
+  else
+      let &grepprg=g:ackprg
+      let &grepformat=g:ackformat
+      silent execute a:cmd . " " . grepargs
+
+      echo "Finished search"
+  endif
 
   let searchStr = matchstr(a:args, '\"\zs[^\"]*\ze\"')
 
@@ -96,7 +77,7 @@ function! s:AckFromSearch(cmd, args)
   let search =  getreg('/')
   " translate vim regular expression to perl regular expression.
   let search = substitute(search,'\(\\<\|\\>\)','\\b','g')
-  call s:Ack(a:cmd, '"' .  search .'" '. a:args)
+  call s:Ack(a:cmd, '"' .  search .'" '. a:args, 1)
 endfunction
 
 function! s:GetDocLocations()
@@ -112,10 +93,10 @@ endfunction
 
 function! s:AckHelp(cmd,args)
     let args = a:args.' '.s:GetDocLocations()
-    call s:Ack(a:cmd,args)
+    call s:Ack(a:cmd, args, 1)
 endfunction
 
-command! -bang -nargs=* Ack call s:Ack('grep<bang>',<q-args>)
+command! -bang -nargs=* Ack call s:AckAsynchronous('grep<bang>',<q-args>)
 command! -bang -nargs=* AckSync call s:AckSynchronous('grep<bang>',<q-args>)
 command! -bang -nargs=* AckAdd call s:Ack('grepadd<bang>', <q-args>)
 command! -bang -nargs=* AckFromSearch call s:AckFromSearch('grep<bang>', <q-args>)
