@@ -35,6 +35,12 @@ function! s:AckAsynchronous(cmd, args)
     call s:Ack(a:cmd, a:args, 1)
 endfunction
 
+function! g:OnAckFinished(request)
+
+    let qfcount = len(getqflist())
+    echo 'Found '. qfcount . ' matches'
+endfunction
+
 function! s:Ack(cmd, args, async)
   wa
   redraw
@@ -58,7 +64,8 @@ function! s:Ack(cmd, args, async)
   if a:async
       setlocal errorformat=%f:%l:%c:%m
       let &l:makeprg=g:ackprg." ".grepargs
-      Make
+      silent call dispatch#compile_command(0, {}, 'g:OnAckFinished', [])
+
   else
       let &grepprg=g:ackprg
       let &grepformat=g:ackformat
