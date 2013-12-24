@@ -69,7 +69,8 @@ function! s:Ack(cmd, args, async)
   else
       let &grepprg=g:ackprg
       let &grepformat=g:ackformat
-      silent execute a:cmd . " " . grepargs
+      "silent execute a:cmd . " " . grepargs
+      silent execute "!" . g:ackprg . " " . grepargs
 
       echo "Finished search"
   endif
