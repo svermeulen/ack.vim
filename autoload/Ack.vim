@@ -12,14 +12,26 @@ function! Ack#DoAck(args)
 endfunction
 
 function! Ack#ExecuteAckAndWait(searchString)
-    let escapedStr = shellescape(a:searchString)
+    if len(searchString) < 3
+        echo "Ignoring ack since it's less than 3 characters"
+        return
+    endif
+
+    let escapedStr = shellescape(a:searchString, 1)
     execute "normal! :AckSync! --literal " . escapedStr . " ". s:ackSearchDir . "\<cr>"
 endfunction
 
 function! Ack#AckMotion(type) abort
+
     let reg_save = @@
 
     call Ack#CopyMotionForType(a:type)
+
+    if len(@@) < 3
+        echo "Ignoring ack since it's less than 3 characters"
+        return
+    endif
+
     let escapedStr = shellescape(@@)
     exec "Ack! ". "--literal ". escapedStr . " ". s:ackSearchDir . "\<cr>"
 
