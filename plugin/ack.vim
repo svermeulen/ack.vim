@@ -45,6 +45,7 @@ function! s:Ack(cmd, args, async)
     try
         wa
     catch /\v.*/
+        " Ignore 'buffer is not saved error'
     endtry
 
     redraw
