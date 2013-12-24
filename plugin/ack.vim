@@ -8,23 +8,23 @@
 
 " Location of the ack utility
 if !exists("g:ackprg")
-  let g:ackprg="ag --column"
+    let g:ackprg="ag --column"
 endif
 
 if !exists("g:ack_apply_qmappings")
-  let g:ack_apply_qmappings = !exists("g:ack_qhandler")
+    let g:ack_apply_qmappings = !exists("g:ack_qhandler")
 endif
 
 if !exists("g:ack_apply_lmappings")
-  let g:ack_apply_lmappings = !exists("g:ack_lhandler")
+    let g:ack_apply_lmappings = !exists("g:ack_lhandler")
 endif
 
 if !exists("g:ack_qhandler")
-  let g:ack_qhandler="copen"
+    let g:ack_qhandler="copen"
 endif
 
 if !exists("g:ack_lhandler")
-  let g:ack_lhandler="lopen"
+    let g:ack_lhandler="lopen"
 endif
 
 function! s:AckSynchronous(cmd, args)
@@ -42,50 +42,54 @@ function! g:OnAckFinished(request)
 endfunction
 
 function! s:Ack(cmd, args, async)
-  wa
-  redraw
+    try
+        wa
+    catch /\v.*/
+    endtry
 
-  " If no pattern is provided, search for the word under the cursor
-  if empty(a:args)
-    let l:grepargs = expand("<cword>")
-  else
-    let l:grepargs = a:args . join(a:000, ' ')
-  end
+    redraw
 
-  echo "Searching..."
+    " If no pattern is provided, search for the word under the cursor
+    if empty(a:args)
+        let l:grepargs = expand("<cword>")
+    else
+        let l:grepargs = a:args . join(a:000, ' ')
+    end
 
-  " Format, used to manage column jump
-  if a:cmd =~# '-g$'
-    let g:ackformat="%f"
-  else
-    let g:ackformat="%f:%l:%c:%m"
-  end
+    echo "Searching..."
 
-  if a:async
-      setlocal errorformat=%f:%l:%c:%m
-      let &l:makeprg=g:ackprg." ".grepargs
-      silent call dispatch#compile_command(0, {}, 'g:OnAckFinished', [])
+    " Format, used to manage column jump
+    if a:cmd =~# '-g$'
+        let g:ackformat="%f"
+    else
+        let g:ackformat="%f:%l:%c:%m"
+    end
 
-  else
-      let &grepprg=g:ackprg
-      let &grepformat=g:ackformat
-      "silent execute a:cmd . " " . grepargs
-      silent execute "!" . g:ackprg . " " . grepargs
+    if a:async
+        setlocal errorformat=%f:%l:%c:%m
+        let &l:makeprg=g:ackprg." ".grepargs
+        silent call dispatch#compile_command(0, {}, 'g:OnAckFinished', [])
 
-      echo "Finished search"
-  endif
+    else
+        let &grepprg=g:ackprg
+        let &grepformat=g:ackformat
+        "silent execute a:cmd . " " . grepargs
+        silent execute "!" . g:ackprg . " " . grepargs
 
-  let searchStr = matchstr(a:args, '\"\zs[^\"]*\ze\"')
+        echo "Finished search"
+    endif
 
-  " Note: this won't work all the time since vim's regex is not perl regex
-  let @/=searchStr
+    let searchStr = matchstr(a:args, '\"\zs[^\"]*\ze\"')
+
+    " Note: this won't work all the time since vim's regex is not perl regex
+    let @/=searchStr
 endfunction
 
 function! s:AckFromSearch(cmd, args)
-  let search =  getreg('/')
-  " translate vim regular expression to perl regular expression.
-  let search = substitute(search,'\(\\<\|\\>\)','\\b','g')
-  call s:Ack(a:cmd, '"' .  search .'" '. a:args, 1)
+    let search =  getreg('/')
+    " translate vim regular expression to perl regular expression.
+    let search = substitute(search,'\(\\<\|\\>\)','\\b','g')
+    call s:Ack(a:cmd, '"' .  search .'" '. a:args, 1)
 endfunction
 
 function! s:GetDocLocations()
