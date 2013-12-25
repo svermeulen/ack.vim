@@ -12,7 +12,7 @@ function! Ack#DoAck(args)
 endfunction
 
 function! Ack#ExecuteAckAndWait(searchString)
-    if len(searchString) < 3
+    if len(a:searchString) < 3
         echo "Ignoring ack since it's less than 3 characters"
         return
     endif
@@ -59,7 +59,9 @@ function! Ack#FindMatchesInProject(searchPattern)
     let bufNumMap = {}
     " put it in a dictionary to avoid duplicates
     for entry in getqflist()
-        let bufNumMap[entry['bufnr']] = 1
+        let bufNum = entry['bufnr']
+        echom 'bufNum = ' . bufNum
+        let bufNumMap[bufNum] = 1
     endfor
 
     return keys(bufNumMap)
