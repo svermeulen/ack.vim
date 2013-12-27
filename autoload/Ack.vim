@@ -60,7 +60,6 @@ function! Ack#FindMatchesInProject(searchPattern)
     " put it in a dictionary to avoid duplicates
     for entry in getqflist()
         let bufNum = entry['bufnr']
-        echom 'bufNum = ' . bufNum
         let bufNumMap[bufNum] = 1
     endfor
 
