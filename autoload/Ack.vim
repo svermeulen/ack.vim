@@ -23,7 +23,7 @@ endfunction
 
 function! Ack#AckMotion(type) abort
 
-    let reg_save = @@
+    SaveDefaultReg
 
     call Ack#CopyMotionForType(a:type)
 
@@ -35,7 +35,7 @@ function! Ack#AckMotion(type) abort
     let escapedStr = shellescape(@@)
     exec "Ack! ". "--literal ". escapedStr . " ". s:ackSearchDir . "\<cr>"
 
-    let @@ = reg_save
+    RestoreDefaultReg
 endfunction
 
 function! Ack#SetAckDirToProjectRoot()
