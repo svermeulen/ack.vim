@@ -39,15 +39,12 @@ function! Ack#AckMotion(type) abort
 endfunction
 
 function! Ack#SetAckDirToProjectRoot()
-    let s:ackSearchDir = Ave#Util#GetProjectRootDir()
+    call Ack#PreMotionConfig(Ave#Util#GetProjectRootDir())
 endfunction
 
-function! Ack#SetAckDirToCurrentDir()
-    let s:ackSearchDir = expand("%:p:h")
-endfunction
-
-function! Ack#SetAckDir(dir)
+function! Ack#PreMotionConfig(dir, ...)
     let s:ackSearchDir = a:dir
+    let s:filePattern = a:0 > 0 ? a:1 : ""
 endfunction
 
 function! Ack#FindMatchesInProject(searchPattern)
