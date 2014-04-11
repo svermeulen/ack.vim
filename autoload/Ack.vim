@@ -33,14 +33,20 @@ function! Ack#AckMotion(type) abort
     endif
 
     let escapedStr = shellescape(@@)
-    exec s:GetAckCommand(escapedStr) . "\<cr>"
+    exec s:GetAckCommand(escapedStr, 0) . "\<cr>"
 
     RestoreDefaultReg
 endfunction
 
-function! s:GetAckCommand(searchPattern)
+function! s:GetAckCommand(searchPattern, isCaseSensitive)
 
-    let ackCommand = "Ack! ". "--literal \"". a:searchPattern . "\""
+    let ackCommand = "Ack! "
+
+    if a:isCaseSensitive
+        let ackCommand .= "-i "
+    endif
+
+    let ackCommand .= "--literal \"". a:searchPattern . "\""
 
     if !empty(s:filePattern)
         let ackCommand .= " -G " . s:filePattern
@@ -61,7 +67,7 @@ function! Ack#PreMotionConfig(dir, ...)
 endfunction
 
 function! Ack#GetCurrentManualSearchString()
-    return ':' . s:GetAckCommand('') . "\<home>\<c-f>\<esc>f\"\<c-c>\<right>"
+    return ':' . s:GetAckCommand('', 1) . "\<home>\<c-f>\<esc>f\"\<c-c>\<right>"
 endfunction
 
 function! Ack#FindMatchesInProject(searchPattern)
