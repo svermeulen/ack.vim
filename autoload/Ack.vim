@@ -1,44 +1,21 @@
 
-function! Ack#CopyMotionForType(type)
-    if a:type ==# 'v'
-        silent execute "normal! `<" . a:type . "`>y"
-    elseif a:type ==# 'char'
-        silent execute "normal! `[v`]y"
-    endif
-endfunction
-
 function! Ack#DoAck(args)
     execute "normal! :Ack! " . a:args . "\<cr>"
 endfunction
 
 function! Ack#ExecuteAckAndWait(searchString)
-    if len(a:searchString) < 3
-        echo "Ignoring ack since it's less than 3 characters"
-        return
-    endif
 
-    let escapedStr = shellescape(a:searchString, 1)
-    execute "normal! :AckSync! --literal " . escapedStr . " ". s:ackSearchDir . "\<cr>"
+    " todo
+    "if len(a:searchString) < 3
+        "echo "Ignoring ack since it's less than 3 characters"
+        "return
+    "endif
+
+    "let escapedStr = shellescape(a:searchString, 1)
+    "execute "normal! :AckSync! --literal " . escapedStr . " ". s:ackSearchDir . "\<cr>"
 endfunction
 
-function! Ack#AckMotion(type) abort
-
-    SaveDefaultReg
-
-    call Ack#CopyMotionForType(a:type)
-
-    if len(@@) < 3
-        echo "Ignoring ack since it's less than 3 characters"
-        return
-    endif
-
-    let escapedStr = shellescape(@@)
-    exec s:GetAckCommand(escapedStr, 0) . "\<cr>"
-
-    RestoreDefaultReg
-endfunction
-
-function! s:GetAckCommand(searchPattern, isCaseSensitive)
+function! s:GetAckCommand(searchPattern, isCaseSensitive, filePattern, searchDir)
 
     let ackCommand = "Ack! "
 
@@ -48,26 +25,40 @@ function! s:GetAckCommand(searchPattern, isCaseSensitive)
 
     let ackCommand .= "--literal \"". a:searchPattern . "\""
 
-    if !empty(s:filePattern)
-        let ackCommand .= " -G " . s:filePattern
+    if !empty(a:filePattern)
+        let ackCommand .= " -G " . a:filePattern
     endif
 
-    let ackCommand .= " ". s:ackSearchDir
+    let ackCommand .= " ". a:searchDir
 
     return ackCommand
 endfunction
 
-function! Ack#SetAckDirToProjectRoot()
-    call Ack#PreMotionConfig(Ave#Util#GetProjectRootDir())
+function! Ack#AckSelectedInDir(dir, ...)
+
+    " Clear selection
+    normal! 
+
+    let filePattern = (a:0 > 0 ? a:1 : "")
+    let searchText = Ave#Util#GetVisualSelection()
+
+    "echom "Searching for " . searchText
+
+    let escapedStr = shellescape(searchText)
+
+    let command = s:GetAckCommand(escapedStr, 0, filePattern, a:dir) . "\<cr>"
+    "echom "Ack command = " . command
+    exec command
 endfunction
 
-function! Ack#PreMotionConfig(dir, ...)
-    let s:ackSearchDir = a:dir
-    let s:filePattern = a:0 > 0 ? a:1 : ""
+function! Ack#GetAckManualCommand(dir, ...)
+    let filePattern = (a:0 > 0 ? a:1 : "")
+    return ':' . s:GetAckCommand('', 1, filePattern, a:dir) . "\<home>\<c-f>\<esc>f\"\<c-c>\<right>"
 endfunction
 
 function! Ack#GetCurrentManualSearchString()
-    return ':' . s:GetAckCommand('', 1) . "\<home>\<c-f>\<esc>f\"\<c-c>\<right>"
+    return ''
+    "return ':' . s:GetAckCommand('', 1) . "\<home>\<c-f>\<esc>f\"\<c-c>\<right>"
 endfunction
 
 function! Ack#FindMatchesInProject(searchPattern)
@@ -85,4 +76,3 @@ function! Ack#FindMatchesInProject(searchPattern)
 
     return keys(bufNumMap)
 endfunction
-
