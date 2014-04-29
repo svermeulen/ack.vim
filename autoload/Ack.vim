@@ -23,7 +23,7 @@ function! s:GetAckCommand(searchPattern, isCaseSensitive, filePattern, searchDir
         let ackCommand .= "-i "
     endif
 
-    let ackCommand .= "--literal \"". a:searchPattern . "\""
+    let ackCommand .= "--literal ". a:searchPattern
 
     if !empty(a:filePattern)
         let ackCommand .= " -G " . a:filePattern
@@ -53,12 +53,7 @@ endfunction
 
 function! Ack#GetAckManualCommand(dir, ...)
     let filePattern = (a:0 > 0 ? a:1 : "")
-    return ':' . s:GetAckCommand('', 1, filePattern, a:dir) . "\<home>\<c-f>\<esc>f\"\<c-c>\<right>"
-endfunction
-
-function! Ack#GetCurrentManualSearchString()
-    return ''
-    "return ':' . s:GetAckCommand('', 1) . "\<home>\<c-f>\<esc>f\"\<c-c>\<right>"
+    return ':' . s:GetAckCommand('""', 1, filePattern, a:dir) . "\<home>\<c-f>\<esc>f\"\<c-c>\<right>"
 endfunction
 
 function! Ack#FindMatchesInProject(searchPattern)
