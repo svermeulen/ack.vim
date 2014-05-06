@@ -3,16 +3,15 @@ function! Ack#DoAck(args)
     execute "normal! :Ack! " . a:args . "\<cr>"
 endfunction
 
-function! Ack#ExecuteAckAndWait(searchString)
+function! Ack#ExecuteAckAndWait(searchString, searchDir)
 
-    " todo
-    "if len(a:searchString) < 3
-        "echo "Ignoring ack since it's less than 3 characters"
-        "return
-    "endif
+    if len(a:searchString) < 3
+        echo "Ignoring ack since it's less than 3 characters"
+        return
+    endif
 
-    "let escapedStr = shellescape(a:searchString, 1)
-    "execute "normal! :AckSync! --literal " . escapedStr . " ". s:ackSearchDir . "\<cr>"
+    let escapedStr = shellescape(a:searchString, 1)
+    execute "normal! :AckSync! --literal " . escapedStr . " ". a:searchDir . "\<cr>"
 endfunction
 
 function! s:GetAckCommand(searchPattern, isCaseSensitive, filePattern, searchDir)
@@ -58,9 +57,8 @@ endfunction
 
 function! Ack#FindMatchesInProject(searchPattern)
 
-    call Ack#SetAckDirToProjectRoot()
     " Replace over the entire project tree!
-    call Ack#ExecuteAckAndWait(a:searchPattern)
+    call Ack#ExecuteAckAndWait(a:searchPattern, Ave#Util#GetProjectRootDir())
 
     let bufNumMap = {}
     " put it in a dictionary to avoid duplicates
