@@ -58,7 +58,7 @@ endfunction
 function! Ack#FindMatchesInProject(searchPattern)
 
     " Replace over the entire project tree!
-    call Ack#ExecuteAckAndWait(a:searchPattern, Ave#Util#GetProjectRootDir())
+    call Ack#ExecuteAckAndWait(a:searchPattern, Ave#ProjectRoot#GetDir())
 
     let bufNumMap = {}
     " put it in a dictionary to avoid duplicates

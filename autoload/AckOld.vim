@@ -58,7 +58,7 @@ function! s:GetAckCommand(searchPattern, isCaseSensitive)
 endfunction
 
 function! AckOld#SetAckDirToProjectRoot()
-    call AckOld#PreMotionConfig(Ave#Util#GetProjectRootDir())
+    call AckOld#PreMotionConfig(Ave#ProjectRoot#GetDir())
 endfunction
 
 function! AckOld#PreMotionConfig(dir, ...)
