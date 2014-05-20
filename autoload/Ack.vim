@@ -25,7 +25,7 @@ function! s:GetAckCommand(searchPattern, isCaseSensitive, filePattern, searchDir
     let ackCommand .= "--literal ". a:searchPattern
 
     if !empty(a:filePattern)
-        let ackCommand .= " -G " . a:filePattern
+        let ackCommand .= " -G \"" . a:filePattern . "\""
     endif
 
     let ackCommand .= " ". a:searchDir
