@@ -33,6 +33,17 @@ function! s:GetAckCommand(searchPattern, isCaseSensitive, filePattern, searchDir
     return ackCommand
 endfunction
 
+function! Ack#AckForSearchRegister()
+
+    let searchText = Ave#Maps#GetCleanSearchRegister()
+
+    echom "Searching for " . searchText
+
+    let command = s:GetAckCommand(searchText, 0, '', Ave#ProjectRoot#GetDir()) . "\<cr>"
+    "echom "Ack command = " . command
+    exec command
+endfunction
+
 function! Ack#AckSelectedInDir(dir, ...)
 
     " Clear selection
