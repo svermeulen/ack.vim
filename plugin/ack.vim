@@ -69,7 +69,7 @@ function! s:Ack(cmd, args, async)
     if a:async
         setlocal errorformat=%f:%l:%c:%m
         let &l:makeprg=g:ackprg." ".grepargs
-        silent call dispatch#compile_command(1, [], 0, 'g:OnAckFinished', [])
+        silent call dispatch#compile_command(0, {}, 'g:OnAckFinished', [])
 
     else
         let &grepprg=g:ackprg
