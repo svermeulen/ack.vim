@@ -70,6 +70,10 @@ function! Ack#FindMatchesInProject(searchPattern)
 
     " Replace over the entire project tree!
     call Ack#ExecuteAckAndWait(a:searchPattern, Ave#ProjectRoot#GetDir())
+    return Ack#GetBuffersInQuickFix()
+endfunction
+
+function! Ack#GetBuffersInQuickFix()
 
     let bufNumMap = {}
     " put it in a dictionary to avoid duplicates
