@@ -57,7 +57,7 @@ function! s:Ack(cmd, args, async)
         let l:grepargs = a:args . join(a:000, ' ')
     end
 
-    echo "Searching..."
+    echo "Ack Searching..."
 
     " Format, used to manage column jump
     if a:cmd =~# '-g$'
