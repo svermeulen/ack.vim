@@ -66,7 +66,7 @@ function! s:Ack(cmd, args, async)
         let g:ackformat="%f:%l:%c:%m"
     end
 
-    "echom "Command = " . g:ackprg." ".grepargs
+    echom "Command = " . g:ackprg." ".grepargs
 
     if a:async
         setlocal errorformat=%f:%l:%c:%m

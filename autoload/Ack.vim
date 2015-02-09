@@ -16,7 +16,9 @@ endfunction
 
 function! s:GetAckCommand(searchPattern, isCaseSensitive, filePattern, searchDir)
 
-    let ackCommand = "Ack! "
+    " -U means to skip source control ignored directories/files
+    " without this file, it would not enter directories that are inside a .gitignore
+    let ackCommand = "Ack! -U "
 
     if a:isCaseSensitive
         let ackCommand .= "-i "
