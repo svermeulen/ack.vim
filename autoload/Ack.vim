@@ -11,7 +11,7 @@ function! Ack#ExecuteAckAndWait(searchString, searchDir)
     endif
 
     let escapedStr = shellescape(a:searchString, 1)
-    execute "normal! :AckSync! --literal " . escapedStr . " ". a:searchDir . "\<cr>"
+    execute "normal! :AckSync! -U --literal " . escapedStr . " ". a:searchDir . "\<cr>"
 endfunction
 
 function! s:GetAckCommand(searchPattern, isCaseSensitive, filePattern, searchDir)
