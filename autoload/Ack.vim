@@ -41,7 +41,7 @@ function! Ack#AckForSearchRegister()
 
     echom "Searching for " . searchText
 
-    let command = s:GetAckCommand(searchText, 0, '', Ave#ProjectRoot#GetDir()) . "\<cr>"
+    let command = s:GetAckCommand(searchText, 0, '', projeny#GetCurrentRoot()) . "\<cr>"
     "echom "Ack command = " . command
     exec command
 endfunction
@@ -71,7 +71,7 @@ endfunction
 function! Ack#FindMatchesInProject(searchPattern)
 
     " Replace over the entire project tree!
-    call Ack#ExecuteAckAndWait(a:searchPattern, Ave#ProjectRoot#GetDir())
+    call Ack#ExecuteAckAndWait(a:searchPattern, projeny#GetCurrentRoot())
     return Ack#GetBuffersInQuickFix()
 endfunction
 
