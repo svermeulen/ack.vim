@@ -30,7 +30,11 @@ function! s:GetAckCommand(searchPattern, isCaseSensitive, filePattern, searchDir
         let ackCommand .= " -G \"" . a:filePattern . "\""
     endif
 
-    let ackCommand .= " ". a:searchDir
+    if strridx(a:searchDir, '\') == -1
+        let ackCommand .= " ". a:searchDir
+    else
+        let ackCommand .= " \"". a:searchDir . "\""
+    endif
 
     return ackCommand
 endfunction
