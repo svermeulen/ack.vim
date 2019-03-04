@@ -147,7 +147,9 @@ function! s:GetDocLocations() "{{{
 endfunction "}}}
 
 function! s:ShowResults(grepargs) "{{{
-  call ack#ShowResults()
+  let numEntries = len(getqflist())
+  echom 'Search complete!  Found ' . string(numEntries) . ' matches'
+  " call ack#ShowResults()
   call s:Highlight(a:grepargs)
 endfunction "}}}
 
