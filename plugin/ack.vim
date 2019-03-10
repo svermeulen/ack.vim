@@ -67,14 +67,14 @@ if !exists("g:ack_use_cword_for_empty_search")
   let g:ack_use_cword_for_empty_search = 1
 endif
 
-command! -bang -nargs=* -complete=file Ack           call ack#Ack('grep<bang>', <q-args>)
-command! -bang -nargs=* -complete=file AckAdd        call ack#Ack('grepadd<bang>', <q-args>)
-command! -bang -nargs=* -complete=file AckFromSearch call ack#AckFromSearch('grep<bang>', <q-args>)
-command! -bang -nargs=* -complete=file LAck          call ack#Ack('lgrep<bang>', <q-args>)
-command! -bang -nargs=* -complete=file LAckAdd       call ack#Ack('lgrepadd<bang>', <q-args>)
-command! -bang -nargs=* -complete=file AckFile       call ack#Ack('grep<bang> -g', <q-args>)
-command! -bang -nargs=* -complete=help AckHelp       call ack#AckHelp('grep<bang>', <q-args>)
-command! -bang -nargs=* -complete=help LAckHelp      call ack#AckHelp('lgrep<bang>', <q-args>)
+command! -bang -nargs=* Ack           call ack#Ack('grep<bang>', <q-args>)
+command! -bang -nargs=* AckAdd        call ack#Ack('grepadd<bang>', <q-args>)
+command! -bang -nargs=* AckFromSearch call ack#AckFromSearch('grep<bang>', <q-args>)
+command! -bang -nargs=* LAck          call ack#Ack('lgrep<bang>', <q-args>)
+command! -bang -nargs=* LAckAdd       call ack#Ack('lgrepadd<bang>', <q-args>)
+command! -bang -nargs=* AckFile       call ack#Ack('grep<bang> -g', <q-args>)
+command! -bang -nargs=* AckHelp       call ack#AckHelp('grep<bang>', <q-args>)
+command! -bang -nargs=* LAckHelp      call ack#AckHelp('lgrep<bang>', <q-args>)
 command! -bang -nargs=*                AckWindow     call ack#AckWindow('grep<bang>', <q-args>)
 command! -bang -nargs=*                LAckWindow    call ack#AckWindow('lgrep<bang>', <q-args>)
 
