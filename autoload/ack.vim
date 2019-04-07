@@ -39,16 +39,22 @@ function! ack#Ack(cmd, args) "{{{
     return
   endif
 
+  " Do we care about this?
+  " NOTE: we escape special chars, but not everything using shellescape to
+  "       allow for passing arguments etc
+  " let l:escaped_args = escape(l:grepargs, '|#%')
+  let l:escaped_args = l:grepargs
+
   let ShowResults = function('s:ShowResults', [l:grepargs])
 
   echo "Searching ..."
 
   if g:ack_use_dispatch
-    call s:SearchWithDispatch(l:grepprg, l:grepargs, l:grepformat)
+    call s:SearchWithDispatch(l:grepprg, l:escaped_args, l:grepformat)
   elseif g:ack_use_async
-    call s:SearchWithAsync(l:grepprg, l:grepargs, l:grepformat, ShowResults)
+    call s:SearchWithAsync(l:grepprg, l:escaped_args, l:grepformat, ShowResults)
   else
-    call s:SearchWithGrep(a:cmd, l:grepprg, l:grepargs, l:grepformat)
+    call s:SearchWithGrep(a:cmd, l:grepprg, l:escaped_args, l:grepformat)
   endif
 
   if !g:ack_use_async
