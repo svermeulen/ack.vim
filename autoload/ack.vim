@@ -150,6 +150,7 @@ endfunction "}}}
 
 function! s:ShowResults(grepargs) "{{{
   let numEntries = len(getqflist())
+  redraw!
   echom 'Search complete!  Found ' . string(numEntries) . ' matches'
   " call ack#ShowResults()
   call s:Highlight(a:grepargs)
